@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\EntryForm;
 
 class SiteController extends Controller
 {
@@ -127,4 +128,27 @@ class SiteController extends Controller
     {
       return $this->render ('say', ['target'=> $target] );
     }
+
+    public function actionEntry()
+    {
+      //Istanzio un nuovo model un oggetto di classe EntryForm derivato da model
+      $model = new EntryForm();
+
+      // se i dati sono stati postati... fai qualcosa
+
+        if($model->load(Yii::$app->request->post())
+            // il metodo ci consente di validare tutti i dati presenti nella form ovvero Yii::$app->request->post()
+            && $model->validate()
+          ){
+            //in questa pagina ci sarà il risultato dell'elaborazione dei dati della form
+              return $this->render('entry-confirm', ['model' => $model]);
+            }
+
+      //altrimenti carica la view della form
+        else {
+          //In questa pagina ci sarà la form iniziale
+          return $this->render('entry', ['model' => $model]);
+        }
+    }
+
 }
