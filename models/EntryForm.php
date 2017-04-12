@@ -15,7 +15,7 @@ class EntryForm extends Model {
 
     public function rules(){
       return [
-        [['name', 'email'], 'required'],
+        [['nome', 'email'], 'required'],
         ['email','email'],
       ];
     }
