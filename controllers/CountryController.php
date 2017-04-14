@@ -49,6 +49,19 @@ class CountryController extends Controller {
       }
 
     }
+    
+    public function actionDelete($code){
+      if(isset($code)){
+        $code = addslashes($code);
+        $country = Country::findOne($code);
+        //$country = Country::find()->where(['code' => $code])->one();
+        $country->delete();
+        return $this->redirect('index.php?r=country/index');
+      }else {
+        return $this->redirect('index.php');
+      }
+
+    }
 
 
 }
