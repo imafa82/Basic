@@ -1,10 +1,10 @@
 <?php
 namespace app\controllers;
-
+use Yii;
 use yii\web\Controller;
 use yii\data\Pagination;
 use app\models\Country;
-
+use app\models\CountryForm;
 
 //IL controller utilizza il model e si chiama Country.php
 
@@ -61,6 +61,49 @@ class CountryController extends Controller {
         return $this->redirect('index.php');
       }
 
+    }
+    
+    
+     public function actionForm($code = null)
+    {
+      //Istanzio un nuovo model un oggetto di classe EntryForm derivato da model
+      $model = new CountryForm();
+      $country = new Country;
+      // se i dati sono stati postati... fai qualcosa
+
+        if($model->load(Yii::$app->request->post())
+            // il metodo ci consente di validare tutti i dati presenti nella form ovvero Yii::$app->request->post()
+            && $model->validate()
+          ){
+            if($code != null){
+                $country = Country::findOne($code);
+            }
+            //in questa pagina ci sarà il risultato dell'elaborazione dei dati della form
+            $country->code = $model->code;
+            $country->name = $model->name;
+            $country->population = $model->population;
+            if($code != null){
+               
+                $country->update();
+                
+            }else{
+                $country->save();
+            }
+     
+            return $this->redirect('index.php?r=country/index');
+            }
+
+      //altrimenti carica la view della form
+        else {
+            if($code != null){
+                $country = Country::findOne($code);
+                $model->code = $country->code;
+                $model->name = $country->name;
+                $model->population = $country->population;
+            }
+          //In questa pagina ci sarà la form iniziale
+          return $this->render('entry', ['model' => $model]);
+        }
     }
 
 
