@@ -1,151 +1,124 @@
 <?php
+
 namespace app\controllers;
+
 use Yii;
-use yii\web\Controller;
-use yii\data\Pagination;
 use app\models\Country;
-use app\models\CountryForm;
+use app\models\CountrySearch;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 
-//IL controller utilizza il model e si chiama Country.php
+/**
+ * CountryController implements the CRUD actions for Country model.
+ */
+class CountryController extends Controller
+{
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
 
-class CountryController extends Controller {
+    /**
+     * Lists all Country models.
+     * @return mixed
+     */
+    public function actionIndex()
+    {
+        $searchModel = new CountrySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-
-    public function actionIndex(){
-      $query = Country::find(); // select
-      //$query è un recorset, restituisce un oggetto di PDOStatement
-      $pagination = new Pagination([
-        'defaultPageSize' => 5, //record per pagina
-        'totalCount' => $query->count(), //conteggio record
-      ]);
-      // Ordinamento e Limit
-      $countries = $query->orderBy('name')
-            ->offset($pagination->offset)
-            ->limit($pagination->limit)
-            //offset e Limit sono equivalenti all'istruzione SQL offset è il primo, limit il secondo parametro select * from country limit(11,20)
-            ->all();
-            // da il fetch dei dati fetchAll(PDO::FETCH_BOTH) traduce quindi una matrice di array associativi
-
-
-      return $this->render('index', [
-            'countries' => $countries,
-            'pagination' => $pagination,
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
-    //Prova
-
-    public function actionProva(){
-      echo "ciao mondo";
-    }
-
-    //Visualizzazione
-
-    public function actionView($code){
-      if(isset($code) && is_string($code)){
-        $code = addslashes($code);
-        $country = $this->findModel($code);
-        //$country = Country::find()->where(['code' => $code])->one();
-
-
-        return $this->render('view', [
-              'country' => $country,
-          ]);
-      }else {
-        return $this->redirect('index.php');
-      }
-
-    }
-
-    // Delete
-
-    public function actionDelete($code){
-      if(isset($code)){
-        $code = addslashes($code);
-        $country = $this->findModel($code);;
-        //$country = Country::find()->where(['code' => $code])->one();
-        $country->delete();
-        return $this->redirect('index.php?r=country/index');
-      }else {
-        return $this->redirect('index.php');
-      }
-
-    }
-
-
-    public function actionUpdate($code){
-
-        //vado a trovare qual'è il model (quindi il record)
-        //corrispondente a $code
-        $model = $this->findModel($code);
-
-        //se i dati sono stati postati e validati
-        if ($model->load(Yii::$app->request->post())
-            && $model->validate())
-
-          {
-            //print_r($model); die();
-            $model->save();
-            return $this->redirect(['view', 'code' => $model->code]);
-       }
-          else{
-            return $this->render('update', [
-                 'model' => $model,
-                ]);
-          }
-
-     }
-
-     public function actionForm($code = null)
+    /**
+     * Displays a single Country model.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionView($id)
     {
-      //Istanzio un nuovo model un oggetto di classe EntryForm derivato da model
-      //$model = new CountryForm();
-      //$country = new Country;
-      $model = new Country;
-      // se i dati sono stati postati... fai qualcosa
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
+    }
 
-        if($model->load(Yii::$app->request->post())
-            // il metodo ci consente di validare tutti i dati presenti nella form ovvero Yii::$app->request->post()
-            && $model->validate()
-          ){
-            if($code != null){
-                $model = $this->findModel($code);
+    /**
+     * Creates a new Country model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $model = new Country();
 
-
-            }
-            //in questa pagina ci sarà il risultato dell'elaborazione dei dati della form
-            if($code != null){
-
-                $model->update();
-
-            }else{
-                $model->save();
-            }
-
-            return $this->redirect('index.php?r=country/index');
-            }
-
-      //altrimenti carica la view della form
-        else {
-            if($code != null){
-                $model = $this->findModel($code);
-            }
-          //In questa pagina ci sarà la form iniziale
-          return $this->render('entry', ['model' => $model]);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->code]);
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+            ]);
         }
     }
 
-    public function findModel($code){
+    /**
+     * Updates an existing Country model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
 
-       //$arrQuery = Country::find()->where(['code' => $code])->one();
-       $arrQuery = Country::findOne($code);
-       //print_r($arrQuery);die();
-       return $arrQuery;
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->code]);
+        } else {
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        }
+    }
 
+    /**
+     * Deletes an existing Country model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
 
-     }
+        return $this->redirect(['index']);
+    }
 
+    /**
+     * Finds the Country model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
+     * @return Country the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Country::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
 }
-
-
- ?>

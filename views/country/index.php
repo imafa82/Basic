@@ -1,38 +1,34 @@
 <?php
+
 use yii\helpers\Html;
-use yii\widgets\LinkPager;
+use yii\grid\GridView;
+use yii\widgets\Pjax;
+/* @var $this yii\web\View */
+/* @var $searchModel app\models\CountrySearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
 
- ?>
-<style>
-h3 a{
-  padding: 0 15px;
-  margin-top: -7px;
-  cursor: pointer;
-  color:white;
-  text-shadow: 1px 1px 1px black, -1px -1px 1px gray;
-}
-h3 a:hover{
-  color:black;
-  text-shadow: 1px 1px 1px gray, -1px -1px 1px white;
-  text-decoration: none;
-}
-h3 span:nth-child(1){
-  display: block;
-  text-align: center;
-}
-h3 span:nth-child(2){
-  font-size: 0.50em;
-}
-</style>
+$this->title = Yii::t('app', 'Countries');
+$this->params['breadcrumbs'][] = $this->title;
+?>
+<div class="country-index">
 
-<h1>Countries <a href="index.php?r=country/form"><span class="glyphicon glyphicon-plus"></span></a> </h1>
- <ul class="list-group">
+    <h1><?= Html::encode($this->title) ?></h1>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-<?php foreach ($countries as $country): ?>
-  <li class="list-group-item list-group-item-success">
-      <h3><?= Html::encode("{$country->name}") ?>  <a class="pull-right" href="index.php?r=country/view&code=<?= Html::encode($country->code) ?>"> <span class="glyphicon glyphicon-eye-open"></span> <span>Dettaglio</span></a>  <a class="pull-right" href="index.php?r=country/update&code=<?= Html::encode($country->code) ?>"><span class="glyphicon glyphicon-pencil"></span> <span>Modifica</span></a> <a class="pull-right" href="index.php?r=country/delete&code=<?= Html::encode($country->code) ?>"><span class="glyphicon glyphicon-remove"></span> <span>Elimina</span></a>  </h3>
-  </li>
-<?php endforeach; ?>
- </ul>
+    <p>
+        <?= Html::a(Yii::t('app', 'Create Country'), ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
+<?php Pjax::begin(); ?>    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
 
- <?= LinkPager::widget(['pagination' => $pagination]) ?>
+            'code',
+            'name',
+            'population',
+
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
+<?php Pjax::end(); ?></div>

@@ -1,22 +1,48 @@
 <?php
+
 namespace app\models;
-use yii\db\ActiveRecord;
 
-class Country extends ActiveRecord {
+use Yii;
 
-//eventuali proprietà e metodi
+/**
+ * This is the model class for table "country".
+ *
+ * @property string $code
+ * @property string $name
+ * @property integer $population
+ */
+class Country extends \yii\db\ActiveRecord
+{
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'country';
+    }
 
-public function rules(){
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['code', 'name'], 'required'],
+            [['population'], 'integer'],
+            [['code'], 'string', 'max' => 2],
+            [['name'], 'string', 'max' => 52],
+        ];
+    }
 
-  return [
-      [['name', 'code', 'population'], 'required'],
-      [['name'], 'string', 'max' => 52],
-      [['code'], 'string', 'max' => 3],
-      [['population'], 'integer'],
-  ];
-
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'code' => Yii::t('app', 'Code'),
+            'name' => Yii::t('app', 'Name'),
+            'population' => Yii::t('app', 'Population'),
+        ];
+    }
 }
-
-}
-
-?>

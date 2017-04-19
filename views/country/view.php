@@ -1,37 +1,37 @@
 <?php
+
 use yii\helpers\Html;
+use yii\widgets\DetailView;
+
+/* @var $this yii\web\View */
+/* @var $model app\models\Country */
+
+$this->title = $model->name;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Countries'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<style>
-    .marginButton{
-      margin: 20px 5px;
-    }
-    h3{
-      float:left;
-    }
-</style>
-<a href="index.php?r=country/index">Ritorna indietro</a>
-<div class="panel panel-default">
-  <div class="panel-body">
-    <h3><?= $country->name ?></h3>
-    <?= Html::a('Update', ['country/form', 'code' => $country->code],
-    ['class' => 'btn btn-primary pull-right marginButton']) ?>
+<div class="country-view">
 
-    <?= Html::a('Delete', ['country/delete', 'code' => $country->code], [
-               'class' => 'btn btn-danger pull-right marginButton',
-               'data' => [
-                   'confirm' => 'Sei sicuro di voler cancellare il dato?',
-                   'method' => 'post',
-               ],
-           ]) ?>
+    <h1><?= Html::encode($this->title) ?></h1>
 
-  </div>
-</div>
-<div class="row">
-  <section class="col-md-6">
-        <p class="text-muted">Codice = <?= $country->code ?></p>
-  </section>
-  <section class="col-md-6">
-        <p>Popolazione = <?= $country->population ?></p>
-  </section>
+    <p>
+        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->code], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->code], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                'method' => 'post',
+            ],
+        ]) ?>
+    </p>
+
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'code',
+            'name',
+            'population',
+        ],
+    ]) ?>
 
 </div>
