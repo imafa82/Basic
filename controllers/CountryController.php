@@ -9,6 +9,8 @@ use app\models\CountryForm;
 //IL controller utilizza il model e si chiama Country.php
 
 class CountryController extends Controller {
+
+
     public function actionIndex(){
       $query = Country::find(); // select
       //$query è un recorset, restituisce un oggetto di PDOStatement
@@ -31,13 +33,18 @@ class CountryController extends Controller {
         ]);
     }
 
+    //Prova
+
     public function actionProva(){
       echo "ciao mondo";
     }
+
+    //Visualizzazione
+
     public function actionView($code){
       if(isset($code) && is_string($code)){
         $code = addslashes($code);
-        $country = Country::findOne($code);
+        $country = $this->findModel($code);
         //$country = Country::find()->where(['code' => $code])->one();
 
 
@@ -49,11 +56,13 @@ class CountryController extends Controller {
       }
 
     }
-    
+
+    // Delete
+
     public function actionDelete($code){
       if(isset($code)){
         $code = addslashes($code);
-        $country = Country::findOne($code);
+        $country = $this->findModel($code);;
         //$country = Country::find()->where(['code' => $code])->one();
         $country->delete();
         return $this->redirect('index.php?r=country/index');
@@ -62,13 +71,14 @@ class CountryController extends Controller {
       }
 
     }
-    
-    
+
+
      public function actionForm($code = null)
     {
       //Istanzio un nuovo model un oggetto di classe EntryForm derivato da model
-      $model = new CountryForm();
-      $country = new Country;
+      //$model = new CountryForm();
+      //$country = new Country;
+      $model = new Country;
       // se i dati sono stati postati... fai qualcosa
 
         if($model->load(Yii::$app->request->post())
@@ -76,27 +86,27 @@ class CountryController extends Controller {
             && $model->validate()
           ){
             if($code != null){
-                $country = Country::findOne($code);
+                $country = $this->findModel($code);
             }
             //in questa pagina ci sarà il risultato dell'elaborazione dei dati della form
             $country->code = $model->code;
             $country->name = $model->name;
             $country->population = $model->population;
             if($code != null){
-               
+
                 $country->update();
-                
+
             }else{
                 $country->save();
             }
-     
+
             return $this->redirect('index.php?r=country/index');
             }
 
       //altrimenti carica la view della form
         else {
             if($code != null){
-                $country = Country::findOne($code);
+                $country = $this->findModel($code);
                 $model->code = $country->code;
                 $model->name = $country->name;
                 $model->population = $country->population;
@@ -106,6 +116,15 @@ class CountryController extends Controller {
         }
     }
 
+    public function findModel($code){
+
+       //$arrQuery = Country::find()->where(['code' => $code])->one();
+       $arrQuery = Country::findOne($code);
+       //print_r($arrQuery);die();
+       return $arrQuery;
+
+
+     }
 
 }
 
