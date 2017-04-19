@@ -73,6 +73,29 @@ class CountryController extends Controller {
     }
 
 
+    public function actionUpdate($code){
+
+        //vado a trovare qual'è il model (quindi il record)
+        //corrispondente a $code
+        $model = $this->findModel($code);
+
+        //se i dati sono stati postati e validati
+        if ($model->load(Yii::$app->request->post())
+            && $model->validate())
+
+          {
+            //print_r($model); die();
+            $model->save();
+            return $this->redirect(['view', 'code' => $model->code]);
+       }
+          else{
+            return $this->render('update', [
+                 'model' => $model,
+                ]);
+          }
+
+     }
+
      public function actionForm($code = null)
     {
       //Istanzio un nuovo model un oggetto di classe EntryForm derivato da model
@@ -86,18 +109,17 @@ class CountryController extends Controller {
             && $model->validate()
           ){
             if($code != null){
-                $country = $this->findModel($code);
+                $model = $this->findModel($code);
+
+
             }
             //in questa pagina ci sarà il risultato dell'elaborazione dei dati della form
-            $country->code = $model->code;
-            $country->name = $model->name;
-            $country->population = $model->population;
             if($code != null){
 
-                $country->update();
+                $model->update();
 
             }else{
-                $country->save();
+                $model->save();
             }
 
             return $this->redirect('index.php?r=country/index');
@@ -106,10 +128,7 @@ class CountryController extends Controller {
       //altrimenti carica la view della form
         else {
             if($code != null){
-                $country = $this->findModel($code);
-                $model->code = $country->code;
-                $model->name = $country->name;
-                $model->population = $country->population;
+                $model = $this->findModel($code);
             }
           //In questa pagina ci sarà la form iniziale
           return $this->render('entry', ['model' => $model]);

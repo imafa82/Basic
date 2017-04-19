@@ -30,7 +30,7 @@ h3 span:nth-child(2){
 
 <?php foreach ($countries as $country): ?>
   <li class="list-group-item list-group-item-success">
-      <h3><?= Html::encode("{$country->name}") ?>  <a class="pull-right" href="index.php?r=country/view&code=<?= Html::encode($country->code) ?>"> <span class="glyphicon glyphicon-eye-open"></span> <span>Dettaglio</span></a>  <a class="pull-right" href="index.php?r=country/form&code=<?= Html::encode($country->code) ?>"><span class="glyphicon glyphicon-pencil"></span> <span>Modifica</span></a> <a class="pull-right" href="index.php?r=country/delete&code=<?= Html::encode($country->code) ?>"><span class="glyphicon glyphicon-remove"></span> <span>Elimina</span></a>  </h3>
+      <h3><?= Html::encode("{$country->name}") ?>  <a class="pull-right" href="index.php?r=country/view&code=<?= Html::encode($country->code) ?>"> <span class="glyphicon glyphicon-eye-open"></span> <span>Dettaglio</span></a>  <a class="pull-right" href="index.php?r=country/update&code=<?= Html::encode($country->code) ?>"><span class="glyphicon glyphicon-pencil"></span> <span>Modifica</span></a> <a class="pull-right" href="index.php?r=country/delete&code=<?= Html::encode($country->code) ?>"><span class="glyphicon glyphicon-remove"></span> <span>Elimina</span></a>  </h3>
   </li>
 <?php endforeach; ?>
  </ul>
