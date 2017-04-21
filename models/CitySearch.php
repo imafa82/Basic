@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Country;
+use app\models\City;
 
 /**
- * CountrySearch represents the model behind the search form about `app\models\Country`.
+ * CitySearch represents the model behind the search form about `app\models\City`.
  */
-class CountrySearch extends Country
+class CitySearch extends City
 {
     /**
      * @inheritdoc
@@ -18,8 +18,8 @@ class CountrySearch extends Country
     public function rules()
     {
         return [
-            [['code', 'name'], 'safe'],
-            [['population'], 'integer'],
+            [['id_city', 'population'], 'integer'],
+            [['ccode', 'name'], 'safe'],
         ];
     }
 
@@ -41,15 +41,17 @@ class CountrySearch extends Country
      */
     public function search($params)
     {
-        $query = Country::find();
+      if(isset($_GET['ccode']) && !is_numeric($_GET['ccode'])){
+        $query = City::find()->where(['ccode' => $_GET['ccode']]);
+      } else {
+        $query = City::find();
+      }
+
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'Pagination' => [
-              'pageSize' => 5
-            ]
         ]);
 
         $this->load($params);
@@ -62,10 +64,11 @@ class CountrySearch extends Country
 
         // grid filtering conditions
         $query->andFilterWhere([
+            'id_city' => $this->id_city,
             'population' => $this->population,
         ]);
 
-        $query->andFilterWhere(['like', 'code', $this->code])
+        $query->andFilterWhere(['like', 'ccode', $this->ccode])
             ->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
